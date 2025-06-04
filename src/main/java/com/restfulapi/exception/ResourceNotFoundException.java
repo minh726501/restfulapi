@@ -1,4 +1,4 @@
-package com.restfullapi.exception;
+package com.restfulapi.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

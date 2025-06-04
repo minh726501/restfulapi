@@ -1,4 +1,4 @@
-package com.restfullapi.dto;
+package com.restfulapi.dto;
 
 public class ApiResponse<T> {
     private int statusCode;

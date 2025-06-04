@@ -1,8 +1,8 @@
-package com.restfullapi.controller;
+package com.restfulapi.controller;
 
-import com.restfullapi.entity.User;
-import com.restfullapi.exception.ResourceNotFoundException;
-import com.restfullapi.service.UserService;
+import com.restfulapi.entity.User;
+import com.restfulapi.exception.ResourceNotFoundException;
+import com.restfulapi.service.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User fetchUserById(@PathVariable long id) {
-        return userService.fetchUserById(id).orElseThrow(() -> new ResourceNotFoundException(("Không tìm thấy sản phẩm với ID: " + id)));
+        return userService.fetchUserById(id).orElseThrow(() -> new ResourceNotFoundException(("Không tìm thấy User với ID: " + id)));
 
     }
 

@@ -1,7 +1,8 @@
-package com.restfullapi.controller;
+package com.restfulapi.controller;
 
-import com.restfullapi.dto.LoginDTO;
+import com.restfulapi.dto.LoginDTO;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<LoginDTO> login(@RequestBody @Valid LoginDTO loginDTO){
         // Nạp input username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),loginDTO.getPassword());
         //Xác thực người dùng => Viết hàm loadUserByUsername

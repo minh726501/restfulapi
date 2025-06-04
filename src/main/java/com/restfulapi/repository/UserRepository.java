@@ -1,6 +1,6 @@
-package com.restfullapi.repository;
+package com.restfulapi.repository;
 
-import com.restfullapi.entity.User;
+import com.restfulapi.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User,Long> {

@@ -1,7 +1,7 @@
-package com.restfullapi.service;
+package com.restfulapi.service;
 
-import com.restfullapi.entity.User;
-import com.restfullapi.repository.UserRepository;
+import com.restfulapi.entity.User;
+import com.restfulapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

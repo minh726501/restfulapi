@@ -1,4 +1,4 @@
-package com.restfullapi.entity;
+package com.restfulapi.entity;
 
 import jakarta.persistence.*;
 
