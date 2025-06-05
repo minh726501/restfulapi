@@ -30,7 +30,9 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation( "org.springframework.boot:spring-boot-starter-validation")
-	}
+	implementation ("com.nimbusds:nimbus-jose-jwt:9.37")
+
+}
 
 
 tasks.withType<Test> {
