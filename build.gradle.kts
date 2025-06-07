@@ -31,6 +31,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation( "org.springframework.boot:spring-boot-starter-validation")
 	implementation ("com.nimbusds:nimbus-jose-jwt:9.37")
+	implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 }
 
