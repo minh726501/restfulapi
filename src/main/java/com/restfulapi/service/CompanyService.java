@@ -1,6 +1,7 @@
 package com.restfulapi.service;
 import com.restfulapi.entity.Company;
 import com.restfulapi.repository.CompanyRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,8 @@ public class CompanyService {
         company.setCreatedAt(Instant.now());
         return companyRepository.save(company);
     }
-    public List<Company> getAllCompany(){
-        return companyRepository.findAll();
+    public List<Company> getAllCompany(Pageable pageable){
+        return companyRepository.findAll(pageable).getContent();
     }
     public Optional<Company> getCompanyById(long id){
         return companyRepository.findById(id);

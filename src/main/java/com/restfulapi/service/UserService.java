@@ -2,6 +2,7 @@ package com.restfulapi.service;
 
 import com.restfulapi.entity.User;
 import com.restfulapi.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +26,8 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public List<User> fetchAllUser(){
-        return userRepository.findAll();
+    public List<User> fetchAllUser(Pageable pageable){
+        return userRepository.findAll(pageable).getContent();
     }
     public User findByUsername(String email){
         return userRepository.findUserByEmail(email);
