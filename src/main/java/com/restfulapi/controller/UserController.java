@@ -4,8 +4,11 @@ import com.restfulapi.entity.User;
 import com.restfulapi.exception.ResourceNotFoundException;
 import com.restfulapi.service.UserService;
 
+import com.turkraft.springfilter.boot.Filter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,9 +48,9 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> fetchAllUser(@RequestParam(value = "page",required = false) int page,@RequestParam(value = "size",required = false)int size) {
+    public ResponseEntity<List<User>> fetchAllUser(@Filter Specification<User> spec,@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false)int size) {
         Pageable pageable= PageRequest.of(page-1,size);
-        return ResponseEntity.ok(userService.fetchAllUser(pageable));
+        return ResponseEntity.ok(userService.fetchAllUser(spec,pageable));
     }
 
     @PutMapping("/users")

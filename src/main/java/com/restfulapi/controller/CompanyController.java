@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +28,7 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
     @GetMapping("companies")
-    public ResponseEntity<List<Company>>getAllCompany(@RequestParam(value = "page",required = false) int page,@RequestParam(value = "size",required = false) int size){
+    public ResponseEntity<List<Company>>getAllCompany(@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false) int size){
         Pageable pageable= PageRequest.of(page-1,size);
         return ResponseEntity.ok().body(companyService.getAllCompany(pageable));
     }
