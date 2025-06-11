@@ -1,5 +1,6 @@
 package com.restfulapi.controller;
 
+import com.restfulapi.annotation.ApiMessage;
 import com.restfulapi.entity.User;
 import com.restfulapi.exception.ResourceNotFoundException;
 import com.restfulapi.service.UserService;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/v1")
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -28,6 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
+    @ApiMessage("Create User")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         String hashPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPass);
@@ -36,24 +39,28 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage("Delete User")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok("delete User By id" + id);
     }
 
     @GetMapping("/users/{id}")
+    @ApiMessage("Fetch User")
     public User fetchUserById(@PathVariable long id) {
         return userService.fetchUserById(id).orElseThrow(() -> new ResourceNotFoundException(("Không tìm thấy User với ID: " + id)));
 
     }
 
     @GetMapping("/users")
+    @ApiMessage("Fetch All User")
     public ResponseEntity<List<User>> fetchAllUser(@Filter Specification<User> spec,@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false)int size) {
         Pageable pageable= PageRequest.of(page-1,size);
         return ResponseEntity.ok(userService.fetchAllUser(spec,pageable));
     }
 
     @PutMapping("/users")
+    @ApiMessage("Update User")
     public ResponseEntity<?> updateUSer(@RequestBody User user) {
         Optional<User> getUser = userService.fetchUserById(user.getId());
         if (getUser.isPresent()) {

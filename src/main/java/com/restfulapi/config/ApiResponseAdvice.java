@@ -1,5 +1,6 @@
 package com.restfulapi.config;
 
+import com.restfulapi.annotation.ApiMessage;
 import com.restfulapi.dto.ApiResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,13 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof ApiResponse) {
             return body;
         }
+        // Lấy message từ @ApiMessage nếu có
+        String message = "Success"; // mặc định
+        ApiMessage apiMessage=returnType.getMethodAnnotation(ApiMessage.class);
+        if (apiMessage!=null){
+            message=apiMessage.value();
+        }
 
-        return new ApiResponse<>(HttpStatus.OK.value(), "Success", body);
+        return new ApiResponse<>(HttpStatus.OK.value(), message, body);
     }
 }
