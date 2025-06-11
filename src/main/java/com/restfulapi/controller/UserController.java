@@ -1,20 +1,23 @@
 package com.restfulapi.controller;
 
 import com.restfulapi.annotation.ApiMessage;
+import com.restfulapi.dto.CreateUserDTO;
 import com.restfulapi.entity.User;
 import com.restfulapi.exception.ResourceNotFoundException;
 import com.restfulapi.service.UserService;
 
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,18 +34,28 @@ public class UserController {
 
     @PostMapping("/users")
     @ApiMessage("Create User")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<CreateUserDTO> createUser(@Valid @RequestBody User user) {
+        boolean existsEmail=userService.existsByEmail(user.getEmail());
+        if (existsEmail){
+            throw new RuntimeException ("Email existed");
+        }
+        user.setCreatedAt(Instant.now());
         String hashPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPass);
         User newUser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(newUser));
     }
 
     @DeleteMapping("/users/{id}")
     @ApiMessage("Delete User")
-    public ResponseEntity<String> deleteUser(@PathVariable long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
+        Optional<User> getUser=userService.fetchUserById(id);
+        if (getUser.isEmpty()){
+            throw new RuntimeException("Không tìm thấy user với ID: " + id);
+
+        }
         userService.deleteUser(id);
-        return ResponseEntity.ok("delete User By id" + id);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/users/{id}")

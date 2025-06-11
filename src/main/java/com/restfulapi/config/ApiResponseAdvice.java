@@ -37,7 +37,6 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
         if (apiMessage!=null){
             message=apiMessage.value();
         }
-
         return new ApiResponse<>(HttpStatus.OK.value(), message, body);
     }
 }

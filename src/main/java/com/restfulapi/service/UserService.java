@@ -1,5 +1,6 @@
 package com.restfulapi.service;
 
+import com.restfulapi.dto.CreateUserDTO;
 import com.restfulapi.entity.User;
 import com.restfulapi.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +33,19 @@ public class UserService {
     }
     public User findByUsername(String email){
         return userRepository.findUserByEmail(email);
+    }
+    public CreateUserDTO createUser(User user){
+        CreateUserDTO createUserDTO=new CreateUserDTO();
+        createUserDTO.setId(user.getId());
+        createUserDTO.setEmail(user.getEmail());
+        createUserDTO.setName(user.getName());
+        createUserDTO.setAge(user.getAge());
+        createUserDTO.setGender(user.getGender());
+        createUserDTO.setCreatedAt(user.getCreatedAt());
+        createUserDTO.setAddress(user.getAddress());
+        return createUserDTO;
+    }
+    public boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 }

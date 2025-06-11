@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -38,6 +39,16 @@ public class GlobalExceptionHandler {
                 .orElse("Dữ liệu không hợp lệ");
         ApiResponse<Object> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Validation Error", errorMessage);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex){
+        ApiResponse<Object>response=new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(),ex.getMessage());
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleNoResourceFoundException(RuntimeException ex){
+        ApiResponse<Object>response=new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(),ex.getMessage());
+        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
 }
 
