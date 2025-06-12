@@ -2,8 +2,8 @@ package com.restfulapi.controller;
 
 import com.restfulapi.annotation.ApiMessage;
 import com.restfulapi.dto.CreateUserDTO;
+import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.User;
-import com.restfulapi.exception.ResourceNotFoundException;
 import com.restfulapi.service.UserService;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -60,14 +60,18 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     @ApiMessage("Fetch User")
-    public User fetchUserById(@PathVariable long id) {
-        return userService.fetchUserById(id).orElseThrow(() -> new ResourceNotFoundException(("Không tìm thấy User với ID: " + id)));
+    public ResponseEntity<ResponseUserDTO> fetchUserById(@PathVariable long id) {
+        Optional<User> getUser= userService.fetchUserById(id);
+        if (getUser.isEmpty()){
+            throw new RuntimeException("Không tìm thấy user với ID: " + id);
+        }
+        return ResponseEntity.ok(userService.convertToResponseUserDTO(getUser.get()));
 
     }
 
     @GetMapping("/users")
     @ApiMessage("Fetch All User")
-    public ResponseEntity<List<User>> fetchAllUser(@Filter Specification<User> spec,@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false)int size) {
+    public ResponseEntity<List<ResponseUserDTO>> fetchAllUser(@Filter Specification<User> spec,@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false)int size) {
         Pageable pageable= PageRequest.of(page-1,size);
         return ResponseEntity.ok(userService.fetchAllUser(spec,pageable));
     }
@@ -76,16 +80,12 @@ public class UserController {
     @ApiMessage("Update User")
     public ResponseEntity<?> updateUSer(@RequestBody User user) {
         Optional<User> getUser = userService.fetchUserById(user.getId());
-        if (getUser.isPresent()) {
-            User updateUser = getUser.get();
-            updateUser.setName(user.getName());
-            updateUser.setEmail(user.getEmail());
-            String hasPass=passwordEncoder.encode(user.getPassword());
-            updateUser.setPassword(hasPass);
-            userService.saveUser(updateUser);
-            return ResponseEntity.ok().body(updateUser);
+        if (getUser.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user với ID: " + user.getId());
+
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user với ID: " + user.getId());
+        return ResponseEntity.ok(userService.convertToResponseUpdateUserDTO(getUser.get()));
     }
 }
 

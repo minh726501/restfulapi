@@ -1,12 +1,15 @@
 package com.restfulapi.service;
 
 import com.restfulapi.dto.CreateUserDTO;
+import com.restfulapi.dto.ResponseUpdateUserDTO;
+import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.User;
 import com.restfulapi.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,8 +31,14 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public List<User> fetchAllUser( Specification<User> spec,Pageable pageable){
-        return userRepository.findAll(spec,pageable).getContent();
+    public List<ResponseUserDTO> fetchAllUser( Specification<User> spec,Pageable pageable){
+         List<User> getList=userRepository.findAll(spec,pageable).getContent();
+         List<ResponseUserDTO>responseUserDTOList=new ArrayList<>();
+         for (User user:getList){
+             ResponseUserDTO dto=convertToResponseUserDTO(user);
+             responseUserDTOList.add(dto);
+         }
+         return responseUserDTOList;
     }
     public User findByUsername(String email){
         return userRepository.findUserByEmail(email);
@@ -47,5 +56,26 @@ public class UserService {
     }
     public boolean existsByEmail(String email){
         return userRepository.existsByEmail(email);
+    }
+    public ResponseUserDTO convertToResponseUserDTO(User user){
+        ResponseUserDTO responseUserDTO=new ResponseUserDTO();
+        responseUserDTO.setId(user.getId());
+        responseUserDTO.setEmail(user.getEmail());
+        responseUserDTO.setName(user.getName());
+        responseUserDTO.setAge(user.getAge());
+        responseUserDTO.setGender(user.getGender());
+        responseUserDTO.setCreatedAt(user.getCreatedAt());
+        responseUserDTO.setAddress(user.getAddress());
+        responseUserDTO.setUpdatedAt(user.getUpdatedAt());
+        return responseUserDTO;
+    }
+    public ResponseUpdateUserDTO convertToResponseUpdateUserDTO(User user){
+        ResponseUpdateUserDTO responseUpdateUserDTO=new ResponseUpdateUserDTO();
+        responseUpdateUserDTO.setId(user.getId());
+        responseUpdateUserDTO.setName(user.getName());
+        responseUpdateUserDTO.setAddress(user.getAddress());
+        responseUpdateUserDTO.setGender(user.getGender());
+        responseUpdateUserDTO.setUpdatedAt(user.getUpdatedAt());
+        return  responseUpdateUserDTO;
     }
 }
