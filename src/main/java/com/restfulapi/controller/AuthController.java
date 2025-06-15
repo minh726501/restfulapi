@@ -36,7 +36,7 @@ public class AuthController {
         //Xác thực người dùng => Viết hàm loadUserByUsername
         Authentication authentication=authenticationManager.authenticate(authenticationToken);
         // Tạo JWT
-        String token = jwtUtil.generateToken(loginDTO.getUsername());
+        String token = jwtUtil.createAccessToken(loginDTO.getUsername());
 
         // Lấy thông tin user
         User user = userService.findByUsername(loginDTO.getUsername());
