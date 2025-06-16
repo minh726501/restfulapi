@@ -8,6 +8,8 @@ import com.restfulapi.service.UserService;
 import com.restfulapi.util.JwtFilter;
 import com.restfulapi.util.JwtUtil;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,16 +38,30 @@ public class AuthController {
         //Xác thực người dùng => Viết hàm loadUserByUsername
         Authentication authentication=authenticationManager.authenticate(authenticationToken);
         // Tạo JWT
-        String token = jwtUtil.createAccessToken(loginDTO.getUsername());
+        String createAccessToken = jwtUtil.createAccessToken(loginDTO.getUsername());
 
         // Lấy thông tin user
         User user = userService.findByUsername(loginDTO.getUsername());
 
         // Gói vào response DTO
         JwtResponseDTO jwtResponseDTO = new JwtResponseDTO();
-        jwtResponseDTO.setToken(token);
+        jwtResponseDTO.setToken(createAccessToken);
         jwtResponseDTO.setUserLogin(new JwtResponseDTO.UserLogin(user.getId(), user.getEmail(), user.getName()));
+        //create refresh token
+        String createRefreshToken= jwtUtil.createRefreshToken(loginDTO.getUsername());
+        userService.updateToken(createRefreshToken, loginDTO.getUsername());
+        //set cookies
+        ResponseCookie responseCookie=ResponseCookie.from("refresh_token",createRefreshToken)
+                .httpOnly(true) // Ngăn JS đọc token, tránh XSS
+                .secure(true)   // Chỉ gửi qua HTTPS
+                .path("/")      // Toàn bộ API đều có thể access cookie này
+                .maxAge(7 * 24 * 60 * 60) // 7 ngày
+                .sameSite("Strict") // Tránh gửi kèm ngoài domain
+                .build();
 
-        return ResponseEntity.ok(jwtResponseDTO);
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
+                .body(jwtResponseDTO);
     }
 }

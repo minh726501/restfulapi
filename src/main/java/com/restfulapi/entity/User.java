@@ -30,6 +30,7 @@ public class User {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    private String refreshToken;
 }
 
 

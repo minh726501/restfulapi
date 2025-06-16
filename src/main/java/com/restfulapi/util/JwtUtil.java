@@ -36,7 +36,7 @@ public class JwtUtil {
             throw new RuntimeException("Không thể tạo JWT", e);
         }
     }
-    public String createRefreshToken(String username, JwtResponseDTO jwtResponseDTO) {
+    public String createRefreshToken(String username ){
         try {
 
             JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -44,7 +44,6 @@ public class JwtUtil {
                     .subject(username)
                     .issueTime(new Date())
                     .expirationTime(new Date(System.currentTimeMillis() + refreshTokenExpiration))
-                    .claim("user",jwtResponseDTO.getUserLogin())
                     .build();
             Payload payload = new Payload(claimsSet.toJSONObject());
             JWSObject object = new JWSObject(header, payload);
