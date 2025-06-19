@@ -70,7 +70,8 @@ public class AuthController {
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@CookieValue("refresh_token") String refreshToken) {
+    @ApiMessage("Refresh Token")
+    public ResponseEntity<JwtResponseDTO> refreshToken(@CookieValue("refresh_token") String refreshToken) {
         if (!jwtUtil.validateRefreshToken(refreshToken)) {
             throw new RuntimeException("Refresh token không hợp lệ hoặc đã hết hạn");
         }
@@ -94,6 +95,31 @@ public class AuthController {
             throw new RuntimeException("Token không hợp lệ", e);
         }
     }
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        if (refreshToken != null && jwtUtil.validateRefreshToken(refreshToken)) {
+            try {
+                String username = jwtUtil.getClaims(refreshToken).getSubject();
+                userService.updateToken(null, username); // Xóa refresh token trong DB
+            } catch (Exception e) {
+                // Nếu lỗi vẫn tiếp tục xóa cookie để client đăng xuất
+            }
+        }
+
+        // Xóa cookie bằng cách tạo cookie rỗng với maxAge = 0
+        ResponseCookie deleteCookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity
+                .noContent() // trả về status 204 No Content
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
+    }
+
 }
 
 
