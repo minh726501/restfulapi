@@ -15,7 +15,8 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        return true;
+        // Không wrap nếu trả về String, vì Spring sẽ lỗi khi cast
+        return !String.class.isAssignableFrom(returnType.getParameterType());
     }
 
     @Override

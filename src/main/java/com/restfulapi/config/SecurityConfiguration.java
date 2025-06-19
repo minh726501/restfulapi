@@ -40,7 +40,7 @@ public class SecurityConfiguration {
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/","api/v1/login").permitAll()
+                        .requestMatchers("/","api/v1/login","api/v1/refresh-token").permitAll()
                         .anyRequest().authenticated()
                 )
 
