@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/users")
     @ApiMessage("Create User")
-    public ResponseEntity<CreateUserDTO> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<ResponseUserDTO> createUser(@Valid @RequestBody User user) {
         boolean existsEmail=userService.existsByEmail(user.getEmail());
         if (existsEmail){
             throw new RuntimeException ("Email existed");
@@ -43,7 +43,7 @@ public class UserController {
         String hashPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPass);
         User newUser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(newUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.convertToResponseUserDTO(newUser));
     }
 
     @DeleteMapping("/users/{id}")
@@ -83,7 +83,6 @@ public class UserController {
         if (getUser.isEmpty()) {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user với ID: " + user.getId());
-
         }
         return ResponseEntity.ok(userService.convertToResponseUpdateUserDTO(getUser.get()));
     }

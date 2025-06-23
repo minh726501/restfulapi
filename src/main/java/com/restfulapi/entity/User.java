@@ -31,6 +31,10 @@ public class User {
     private String createdBy;
     private String updatedBy;
     private String refreshToken;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
 }
 
 

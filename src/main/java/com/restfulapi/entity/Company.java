@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "companies")
@@ -24,5 +25,7 @@ public class Company {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @OneToMany(mappedBy = "company",fetch = FetchType.LAZY)
+    private List<User>users;
 
 }

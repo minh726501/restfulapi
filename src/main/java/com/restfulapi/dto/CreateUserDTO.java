@@ -1,6 +1,7 @@
 package com.restfulapi.dto;
 
 import com.restfulapi.constant.GenderEnum;
+import com.restfulapi.entity.Company;
 import lombok.Getter;
 import lombok.Setter;
 

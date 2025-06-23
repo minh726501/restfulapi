@@ -1,9 +1,12 @@
 package com.restfulapi.service;
 
+import com.restfulapi.dto.CompanyDTO;
 import com.restfulapi.dto.CreateUserDTO;
 import com.restfulapi.dto.ResponseUpdateUserDTO;
 import com.restfulapi.dto.ResponseUserDTO;
+import com.restfulapi.entity.Company;
 import com.restfulapi.entity.User;
+import com.restfulapi.repository.CompanyRepository;
 import com.restfulapi.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,9 +19,13 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CompanyService companyService;
+    private final CompanyRepository companyRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
+        this.companyRepository = companyRepository;
     }
 
     public User saveUser(User user){
@@ -43,22 +50,13 @@ public class UserService {
     public User findByUsername(String email){
         return userRepository.findUserByEmail(email);
     }
-    public CreateUserDTO createUser(User user){
-        CreateUserDTO createUserDTO=new CreateUserDTO();
-        createUserDTO.setId(user.getId());
-        createUserDTO.setEmail(user.getEmail());
-        createUserDTO.setName(user.getName());
-        createUserDTO.setAge(user.getAge());
-        createUserDTO.setGender(user.getGender());
-        createUserDTO.setCreatedAt(user.getCreatedAt());
-        createUserDTO.setAddress(user.getAddress());
-        return createUserDTO;
-    }
+
     public boolean existsByEmail(String email){
         return userRepository.existsByEmail(email);
     }
-    public ResponseUserDTO convertToResponseUserDTO(User user){
-        ResponseUserDTO responseUserDTO=new ResponseUserDTO();
+    public ResponseUserDTO convertToResponseUserDTO(User user) {
+        ResponseUserDTO responseUserDTO = new ResponseUserDTO();
+        CompanyDTO companyDTO=new CompanyDTO();
         responseUserDTO.setId(user.getId());
         responseUserDTO.setEmail(user.getEmail());
         responseUserDTO.setName(user.getName());
@@ -67,15 +65,32 @@ public class UserService {
         responseUserDTO.setCreatedAt(user.getCreatedAt());
         responseUserDTO.setAddress(user.getAddress());
         responseUserDTO.setUpdatedAt(user.getUpdatedAt());
+        if (user.getCompany()!=null){
+            Optional<Company> company=companyService.getCompanyById(user.getCompany().getId());
+            if (company.isPresent()){
+                companyDTO.setId(company.get().getId());
+                companyDTO.setName(company.get().getName());
+                responseUserDTO.setCompany(companyDTO);
+            }
+        }
         return responseUserDTO;
     }
     public ResponseUpdateUserDTO convertToResponseUpdateUserDTO(User user){
         ResponseUpdateUserDTO responseUpdateUserDTO=new ResponseUpdateUserDTO();
+        CompanyDTO companyDTO=new CompanyDTO();
         responseUpdateUserDTO.setId(user.getId());
         responseUpdateUserDTO.setName(user.getName());
         responseUpdateUserDTO.setAddress(user.getAddress());
         responseUpdateUserDTO.setGender(user.getGender());
         responseUpdateUserDTO.setUpdatedAt(user.getUpdatedAt());
+        if (user.getCompany()!=null){
+            Optional<Company> company=companyService.getCompanyById(user.getCompany().getId());
+            if (company.isPresent()){
+                companyDTO.setId(user.getCompany().getId());
+                companyDTO.setName(user.getCompany().getName());
+                responseUpdateUserDTO.setCompany(companyDTO);
+            }
+        }
         return  responseUpdateUserDTO;
     }
     public void updateToken(String token,String email){
@@ -85,4 +100,5 @@ public class UserService {
             userRepository.save(getuser);
         }
     }
+
 }
