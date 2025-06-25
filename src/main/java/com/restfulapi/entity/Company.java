@@ -1,5 +1,6 @@
 package com.restfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class Company {
     private String createdBy;
     private String updatedBy;
     @OneToMany(mappedBy = "company",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<User>users;
+    @OneToMany(mappedBy = "company",fetch = FetchType.LAZY)
+    private List<Job> job;
 
 }

@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +22,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final CompanyService companyService;
-    private final CompanyRepository companyRepository;
+
 
     public UserService(UserRepository userRepository, CompanyService companyService, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.companyService = companyService;
-        this.companyRepository = companyRepository;
+
     }
 
     public User saveUser(User user){
@@ -75,11 +77,34 @@ public class UserService {
         }
         return responseUserDTO;
     }
+    public User updateUser(User user){
+        Optional<User> existingUserOpt=fetchUserById(user.getId());
+        if (existingUserOpt.isEmpty()){
+            throw new RuntimeException("Không tìm thấy user với ID: " + user.getId());
+        }
+        User existingUser=existingUserOpt.get();
+        existingUser.setName(user.getName());
+        existingUser.setAge(user.getAge());
+        existingUser.setAddress(user.getAddress());
+        existingUser.setGender(user.getGender());
+        existingUser.setUpdatedAt(Instant.now());
+        // Nếu userRequest có company, cập nhật công ty
+        if (user.getCompany()!=null){
+            Company company=companyService.getCompanyById(user.getCompany().getId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy company với ID: " + user.getCompany().getId()));
+            existingUser.setCompany(company);
+
+        }
+        return userRepository.save(existingUser);
+
+
+    }
     public ResponseUpdateUserDTO convertToResponseUpdateUserDTO(User user){
         ResponseUpdateUserDTO responseUpdateUserDTO=new ResponseUpdateUserDTO();
         CompanyDTO companyDTO=new CompanyDTO();
         responseUpdateUserDTO.setId(user.getId());
         responseUpdateUserDTO.setName(user.getName());
+        responseUpdateUserDTO.setAge(user.getAge());
         responseUpdateUserDTO.setAddress(user.getAddress());
         responseUpdateUserDTO.setGender(user.getGender());
         responseUpdateUserDTO.setUpdatedAt(user.getUpdatedAt());

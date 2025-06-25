@@ -2,6 +2,7 @@ package com.restfulapi.controller;
 
 import com.restfulapi.annotation.ApiMessage;
 import com.restfulapi.dto.CreateUserDTO;
+import com.restfulapi.dto.ResponseUpdateUserDTO;
 import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.User;
 import com.restfulapi.service.UserService;
@@ -78,13 +79,14 @@ public class UserController {
 
     @PutMapping("/users")
     @ApiMessage("Update User")
-    public ResponseEntity<?> updateUSer(@RequestBody User user) {
+    public ResponseEntity<ResponseUpdateUserDTO> updateUSer(@RequestBody User user) {
         Optional<User> getUser = userService.fetchUserById(user.getId());
         if (getUser.isEmpty()) {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user với ID: " + user.getId());
+            throw new RuntimeException("Không tìm thấy user với ID: " + user.getId());
         }
-        return ResponseEntity.ok(userService.convertToResponseUpdateUserDTO(getUser.get()));
+        User updateUser=userService.updateUser(user);
+        return ResponseEntity.ok(userService.convertToResponseUpdateUserDTO(updateUser));
     }
 }
 
