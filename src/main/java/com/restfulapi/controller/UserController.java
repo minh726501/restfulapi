@@ -82,7 +82,6 @@ public class UserController {
     public ResponseEntity<ResponseUpdateUserDTO> updateUSer(@RequestBody User user) {
         Optional<User> getUser = userService.fetchUserById(user.getId());
         if (getUser.isEmpty()) {
-
             throw new RuntimeException("Không tìm thấy user với ID: " + user.getId());
         }
         User updateUser=userService.updateUser(user);

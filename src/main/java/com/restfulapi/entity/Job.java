@@ -23,7 +23,7 @@ public class Job {
     private String description;
     private Instant startDate;
     private Instant endDate;
-    private boolean isActive;
+    private boolean active;
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
