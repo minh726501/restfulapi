@@ -2,6 +2,7 @@ package com.restfulapi.controller;
 
 import com.restfulapi.entity.Skill;
 import com.restfulapi.service.SkillService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class SkillController {
     }
 
     @PostMapping("/skills")
-    public ResponseEntity<Skill> createSkill(@RequestBody Skill skill){
+    public ResponseEntity<Skill> createSkill(@RequestBody @Valid Skill skill){
         if (skillService.existsSkillName(skill.getName())){
             throw new RuntimeException("Skill đã tồn tại");
         }

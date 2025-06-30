@@ -1,5 +1,6 @@
 package com.restfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restfulapi.constant.LevelEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Job {
             joinColumns = @JoinColumn(name = "job_id"), // khóa ngoại đến Job
             inverseJoinColumns = @JoinColumn(name = "skill_id") // khóa ngoại đến Skill
     )
+
     private List<Skill> skills;
 
 }
