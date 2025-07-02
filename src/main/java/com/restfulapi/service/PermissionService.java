@@ -2,6 +2,7 @@ package com.restfulapi.service;
 
 import com.restfulapi.dto.PermissionResponseDTO;
 import com.restfulapi.entity.Permission;
+import com.restfulapi.entity.Role;
 import com.restfulapi.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 
@@ -54,8 +55,14 @@ public class PermissionService {
         return convertToPermissionDTO(savePer);
     }
     public void deletePer(long id){
-        permissionRepository.deleteById(id);
+        Optional<Permission>getPer=getPerById(id);
+        if (getPer.isEmpty()){
+            throw new RuntimeException("Permission ID không tồn tại");
+        }
+        Permission existingPer= getPer.get();
+        for (Role role: existingPer.getRoles()){
+            role.getPermissions().remove(existingPer);
+        }
+        permissionRepository.delete(existingPer);
     }
-
-
 }

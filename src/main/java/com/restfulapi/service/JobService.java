@@ -32,7 +32,6 @@ public class JobService {
                     throw new RuntimeException("Skill với ID " + skillId + " không tồn tại");
                 }
                 validSkill.add(existingSkill.get());
-
             }
             job.setSkills(validSkill);
         }

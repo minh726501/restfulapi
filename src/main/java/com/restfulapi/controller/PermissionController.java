@@ -45,9 +45,6 @@ public class PermissionController {
     @DeleteMapping("/permission/{id}")
     public ResponseEntity<Void>deletePer(@PathVariable long id){
         Optional<Permission>getPer=permissionService.getPerById(id);
-        if (getPer.isEmpty()){
-            throw new RuntimeException("Permission ID không tồn tại");
-        }
         permissionService.deletePer(id);
         return ResponseEntity.noContent().build();
     }
