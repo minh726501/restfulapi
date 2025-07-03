@@ -1,6 +1,7 @@
 package com.restfulapi.dto;
 
 import com.restfulapi.constant.GenderEnum;
+import com.restfulapi.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,4 +16,5 @@ public class ResponseUpdateUserDTO {
     private GenderEnum gender;
     private Instant updatedAt;
     private CompanyDTO company;
+    private RoleResponseDTO role;
 }

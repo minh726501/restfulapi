@@ -5,6 +5,7 @@ import com.restfulapi.dto.CreateUserDTO;
 import com.restfulapi.dto.ResponseUpdateUserDTO;
 import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.User;
+import com.restfulapi.service.RoleService;
 import com.restfulapi.service.UserService;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -27,10 +28,12 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder,RoleService roleService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.roleService=roleService;
     }
 
     @PostMapping("/users")
@@ -39,6 +42,10 @@ public class UserController {
         boolean existsEmail=userService.existsByEmail(user.getEmail());
         if (existsEmail){
             throw new RuntimeException ("Email existed");
+        }
+        if (user.getRole()!=null && user.getRole().getId()>0){
+            roleService.getRoleById(user.getRole().getId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Role với ID: " + user.getRole().getId()));
         }
         user.setCreatedAt(Instant.now());
         String hashPass = passwordEncoder.encode(user.getPassword());

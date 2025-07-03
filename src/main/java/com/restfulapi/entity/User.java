@@ -34,6 +34,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 }
 

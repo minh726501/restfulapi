@@ -18,4 +18,5 @@ public class ResponseUserDTO {
     private Instant createdAt;
     private Instant updatedAt;
     private CompanyDTO company;
+    private RoleResponseDTO Role;
 }

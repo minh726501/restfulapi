@@ -1,10 +1,8 @@
 package com.restfulapi.service;
 
-import com.restfulapi.dto.CompanyDTO;
-import com.restfulapi.dto.CreateUserDTO;
-import com.restfulapi.dto.ResponseUpdateUserDTO;
-import com.restfulapi.dto.ResponseUserDTO;
+import com.restfulapi.dto.*;
 import com.restfulapi.entity.Company;
+import com.restfulapi.entity.Role;
 import com.restfulapi.entity.User;
 import com.restfulapi.repository.CompanyRepository;
 import com.restfulapi.repository.UserRepository;
@@ -22,12 +20,13 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
 
-    public UserService(UserRepository userRepository, CompanyService companyService, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService, CompanyRepository companyRepository,RoleService roleService) {
         this.userRepository = userRepository;
         this.companyService = companyService;
-
+        this.roleService=roleService;
     }
 
     public User saveUser(User user){
@@ -59,6 +58,7 @@ public class UserService {
     public ResponseUserDTO convertToResponseUserDTO(User user) {
         ResponseUserDTO responseUserDTO = new ResponseUserDTO();
         CompanyDTO companyDTO=new CompanyDTO();
+        RoleResponseDTO roleResponseDTO=new RoleResponseDTO();
         responseUserDTO.setId(user.getId());
         responseUserDTO.setEmail(user.getEmail());
         responseUserDTO.setName(user.getName());
@@ -73,6 +73,14 @@ public class UserService {
                 companyDTO.setId(company.get().getId());
                 companyDTO.setName(company.get().getName());
                 responseUserDTO.setCompany(companyDTO);
+            }
+        }
+        if (user.getRole()!=null){
+            Optional<Role>getRole=roleService.getRoleById(user.getRole().getId());
+            if (getRole.isPresent()){
+                roleResponseDTO.setId(getRole.get().getId());
+                roleResponseDTO.setName(getRole.get().getName());
+                responseUserDTO.setRole(roleResponseDTO);
             }
         }
         return responseUserDTO;
@@ -93,15 +101,18 @@ public class UserService {
             Company company=companyService.getCompanyById(user.getCompany().getId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy company với ID: " + user.getCompany().getId()));
             existingUser.setCompany(company);
-
+        }
+        if (user.getRole()!=null){
+            Role role=roleService.getRoleById(user.getRole().getId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Role với ID: " + user.getRole().getId()));
+            existingUser.setRole(role);
         }
         return userRepository.save(existingUser);
-
-
     }
     public ResponseUpdateUserDTO convertToResponseUpdateUserDTO(User user){
         ResponseUpdateUserDTO responseUpdateUserDTO=new ResponseUpdateUserDTO();
         CompanyDTO companyDTO=new CompanyDTO();
+        RoleResponseDTO roleResponseDTO=new RoleResponseDTO();
         responseUpdateUserDTO.setId(user.getId());
         responseUpdateUserDTO.setName(user.getName());
         responseUpdateUserDTO.setAge(user.getAge());
@@ -114,6 +125,14 @@ public class UserService {
                 companyDTO.setId(user.getCompany().getId());
                 companyDTO.setName(user.getCompany().getName());
                 responseUpdateUserDTO.setCompany(companyDTO);
+            }
+        }
+        if (user.getRole() != null) {
+            Optional<Role>getRole=roleService.getRoleById(user.getRole().getId());
+            if (getRole.isPresent()){
+                roleResponseDTO.setId(getRole.get().getId());
+                roleResponseDTO.setName(getRole.get().getName());
+                responseUpdateUserDTO.setRole(roleResponseDTO);
             }
         }
         return  responseUpdateUserDTO;

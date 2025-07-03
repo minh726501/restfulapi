@@ -4,6 +4,7 @@ import com.restfulapi.dto.PermissionResponseDTO;
 import com.restfulapi.entity.Permission;
 import com.restfulapi.entity.Role;
 import com.restfulapi.repository.PermissionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

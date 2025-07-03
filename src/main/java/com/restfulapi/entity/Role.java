@@ -20,11 +20,13 @@ public class Role {
     private String description;
     private boolean active;
     @ManyToMany
-
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns =@JoinColumn(name = "permission_id")
     )
     private List<Permission> permissions=new ArrayList<>();
+    @OneToMany(mappedBy = "role")
+    private List<User>users;
+
 }

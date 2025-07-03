@@ -42,7 +42,7 @@ public class PermissionController {
     public ResponseEntity<PermissionResponseDTO>updatePer(@RequestBody Permission permission){
         return ResponseEntity.ok(permissionService.updatePer(permission));
     }
-    @DeleteMapping("/permission/{id}")
+    @DeleteMapping("/permissions/{id}")
     public ResponseEntity<Void>deletePer(@PathVariable long id){
         Optional<Permission>getPer=permissionService.getPerById(id);
         permissionService.deletePer(id);

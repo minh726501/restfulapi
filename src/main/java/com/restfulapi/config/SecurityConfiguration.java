@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","api/v1/login","api/v1/refresh-token").permitAll()
-                        .anyRequest().authenticated()
+                                                .anyRequest().authenticated()
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
