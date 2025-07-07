@@ -3,6 +3,8 @@ package com.restfulapi.controller;
 import com.restfulapi.dto.JobResponseDTO;
 import com.restfulapi.entity.Job;
 import com.restfulapi.service.JobService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +34,9 @@ public class JobController {
         return ResponseEntity.ok(jobService.convertToJobResponseDTO(getJob.get()));
     }
     @GetMapping("/jobs")
-    public ResponseEntity<List<JobResponseDTO>>getAllJob(){
-        List<Job>jobs=jobService.getListJob();
+    public ResponseEntity<List<JobResponseDTO>>getAllJob(@RequestParam(value = "page",required = false)int page,@RequestParam(value = "size",required = false)int size){
+        Pageable pageable= PageRequest.of(page-1,size);
+        List<Job>jobs=jobService.getListJob(pageable);
         List<JobResponseDTO>jobResponseDTOList=new ArrayList<>();
         for (Job job:jobs){
             JobResponseDTO dto=jobService.convertToJobResponseDTO(job);

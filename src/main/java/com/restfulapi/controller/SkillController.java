@@ -3,6 +3,8 @@ package com.restfulapi.controller;
 import com.restfulapi.entity.Skill;
 import com.restfulapi.service.SkillService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +37,9 @@ public class SkillController {
         return ResponseEntity.ok(getSkill.get());
     }
     @GetMapping("/skills")
-    public ResponseEntity<List<Skill>> getAllSkill(){
-        return ResponseEntity.ok(skillService.getAllSkill());
+    public ResponseEntity<List<Skill>> getAllSkill(@RequestParam(value = "page",required = false) int page,@RequestParam(value = "size",required = false)int size){
+        Pageable pageable= PageRequest.of(page-1,size);
+        return ResponseEntity.ok(skillService.getAllSkill(pageable));
     }
     @PutMapping("/skills")
     public ResponseEntity<Skill>updateSkill(@RequestBody Skill skill){

@@ -20,7 +20,9 @@ public class Job {
     private String location;
     private String salary;
     private int quantity;
+    @Enumerated(EnumType.STRING)
     private LevelEnum level;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Instant startDate;
     private Instant endDate;
@@ -34,7 +36,9 @@ public class Job {
             joinColumns = @JoinColumn(name = "job_id"), // khóa ngoại đến Job
             inverseJoinColumns = @JoinColumn(name = "skill_id") // khóa ngoại đến Skill
     )
-
     private List<Skill> skills;
+    @OneToMany(mappedBy = "job")
+    @JsonIgnore
+    private List<Resume>resumes;
 
 }

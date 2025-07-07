@@ -50,7 +50,7 @@ public class AuthController {
         JwtResponseDTO jwtResponseDTO = new JwtResponseDTO();
 
         jwtResponseDTO.setToken(createAccessToken);
-        jwtResponseDTO.setUserLogin(new JwtResponseDTO.UserLogin(user.getId(), user.getEmail(), user.getName()));
+        jwtResponseDTO.setUserLogin(new JwtResponseDTO.UserLogin(user.getId(), user.getEmail(), user.getName(),user.getRole()));
         //create refresh token
         String createRefreshToken = jwtUtil.createRefreshToken(user);
         userService.updateToken(createRefreshToken, loginDTO.getUsername());

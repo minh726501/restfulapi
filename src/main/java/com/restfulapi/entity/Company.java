@@ -30,6 +30,7 @@ public class Company {
     @JsonIgnore
     private List<User>users;
     @OneToMany(mappedBy = "company",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Job> job;
 
 }

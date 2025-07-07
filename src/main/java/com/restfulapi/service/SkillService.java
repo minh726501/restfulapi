@@ -2,6 +2,7 @@ package com.restfulapi.service;
 
 import com.restfulapi.entity.Skill;
 import com.restfulapi.repository.SkillRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class SkillService {
     public Optional<Skill> getSkillById(long id){
         return skillRepository.findById(id);
     }
-    public List<Skill>getAllSkill(){
-        return skillRepository.findAll();
+    public List<Skill>getAllSkill( Pageable pageable){
+        return skillRepository.findAll(pageable).getContent();
     }
     public Skill updateSkill(Skill skill){
         Optional<Skill>getSkillById=getSkillById(skill.getId());

@@ -1,7 +1,6 @@
 package com.restfulapi.controller;
 
 import com.restfulapi.annotation.ApiMessage;
-import com.restfulapi.dto.CreateUserDTO;
 import com.restfulapi.dto.ResponseUpdateUserDTO;
 import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.User;

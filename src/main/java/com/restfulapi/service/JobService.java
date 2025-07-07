@@ -5,6 +5,7 @@ import com.restfulapi.dto.ResponseUserDTO;
 import com.restfulapi.entity.Job;
 import com.restfulapi.entity.Skill;
 import com.restfulapi.repository.JobRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class JobService {
     public Optional<Job> getJobById(long id){
         return jobRepository.findById(id);
     }
-    public List<Job>getListJob(){
-        return jobRepository.findAll();
+    public List<Job>getListJob(Pageable pageable){
+        return jobRepository.findAll(pageable).getContent();
     }
     public void deleteJobById(long id){
         jobRepository.deleteById(id);

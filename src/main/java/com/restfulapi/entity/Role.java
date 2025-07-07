@@ -27,6 +27,7 @@ public class Role {
     )
     private List<Permission> permissions=new ArrayList<>();
     @OneToMany(mappedBy = "role")
+    @JsonIgnore
     private List<User>users;
 
 }
