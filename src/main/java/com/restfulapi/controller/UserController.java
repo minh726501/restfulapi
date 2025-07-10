@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,7 +76,7 @@ public class UserController {
         return ResponseEntity.ok(userService.convertToResponseUserDTO(getUser.get()));
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     @ApiMessage("Fetch All User")
     public ResponseEntity<List<ResponseUserDTO>> fetchAllUser(@Filter Specification<User> spec,@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false)int size) {

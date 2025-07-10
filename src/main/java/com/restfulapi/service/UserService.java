@@ -8,10 +8,10 @@ import com.restfulapi.repository.CompanyRepository;
 import com.restfulapi.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +21,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyService companyService;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
-
-    public UserService(UserRepository userRepository, CompanyService companyService, CompanyRepository companyRepository,RoleService roleService) {
+    public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.companyService = companyService;
-        this.roleService=roleService;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User saveUser(User user){
@@ -49,7 +50,7 @@ public class UserService {
          return responseUserDTOList;
     }
     public User findByUsername(String email){
-        return userRepository.findUserByEmail(email);
+        return userRepository.findByEmailWithRole(email).orElse(null);
     }
 
     public boolean existsByEmail(String email){
@@ -138,11 +139,31 @@ public class UserService {
         return  responseUpdateUserDTO;
     }
     public void updateToken(String token,String email){
-        User getuser=userRepository.findUserByEmail(email);
+        User getuser=userRepository.findByEmailWithRole(email).orElse(null);
         if (getuser!=null){
             getuser.setRefreshToken(token);
             userRepository.save(getuser);
         }
+    }
+    public User registerUser(RegisterDTO registerDTO){
+        User user=new User();
+        user.setName(registerDTO.getName());
+        user.setEmail(registerDTO.getEmail());
+        user.setGender(registerDTO.getGender());
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        user.setAddress(registerDTO.getAddress());
+        Role defaultRole=roleService.findByName("USER");
+        user.setRole(defaultRole);
+        return userRepository.save(user);
+    }
+    public ResponseRegisterDTO convertToDTO(User user){
+        ResponseRegisterDTO dto=new ResponseRegisterDTO();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setAge(user.getAge());
+        dto.setGender(user.getGender());
+        dto.setAddress(user.getAddress());
+        return dto;
     }
 
 }

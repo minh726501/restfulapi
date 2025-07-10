@@ -32,6 +32,7 @@ public class JwtUtil {
                     .claim("id",user.getId())
                     .claim("email",user.getEmail())
                     .claim("name",user.getName())
+                    .claim("role",user.getRole().getName())
                     .build();
             Payload payload = new Payload(claimsSet.toJSONObject());
             JWSObject object = new JWSObject(header, payload);

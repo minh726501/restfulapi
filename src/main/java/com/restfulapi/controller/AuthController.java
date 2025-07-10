@@ -1,11 +1,10 @@
 package com.restfulapi.controller;
 
 import com.restfulapi.annotation.ApiMessage;
-import com.restfulapi.dto.ApiResponse;
-import com.restfulapi.dto.JwtResponseDTO;
-import com.restfulapi.dto.LoginDTO;
+import com.restfulapi.dto.*;
 
 import com.restfulapi.entity.User;
+import com.restfulapi.service.RoleService;
 import com.restfulapi.service.UserService;
 import com.restfulapi.util.JwtFilter;
 import com.restfulapi.util.JwtUtil;
@@ -16,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -32,6 +32,16 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
+    @PostMapping("/register")
+    @ApiMessage("Register user")
+    public ResponseEntity<ResponseRegisterDTO>register(@RequestBody RegisterDTO registerDTO){
+        if (userService.existsByEmail(registerDTO.getEmail())){
+            throw new RuntimeException("Email đã được sử dụng");
+        }
+        User user=userService.registerUser(registerDTO);
+        return ResponseEntity.ok(userService.convertToDTO(user));
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponseDTO> login(@RequestBody @Valid LoginDTO loginDTO) {
@@ -119,6 +129,13 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
                 .build();
     }
+    @GetMapping("/debug-auth")
+    public void debug() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Username: " + auth.getName());
+        System.out.println("Authorities: " + auth.getAuthorities());
+    }
+
 
 }
 

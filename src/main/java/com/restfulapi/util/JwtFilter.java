@@ -40,13 +40,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 // Verify token signature
                 MACVerifier verifier = new MACVerifier(secret.getBytes(StandardCharsets.UTF_8));
                 if (jwsObject.verify(verifier)) {
+                    var payload = jwsObject.getPayload().toJSONObject();
                     // Lấy username từ payload
                     String username = jwsObject.getPayload().toJSONObject().get("sub").toString();
+                    // 👇 Lấy role từ token
+                    String role = payload.get("role") != null ? payload.get("role").toString() : "USER";
+                    String authority = "ROLE_" + role;
+
                     // Tạo Authentication token (có thể add roles sau nếu cần)
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             username,
                             null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                            Collections.singletonList(new SimpleGrantedAuthority(authority))
                     );
                     // Set vào SecurityContext
                     SecurityContextHolder.getContext().setAuthentication(authentication);

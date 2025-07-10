@@ -1,4 +1,5 @@
 package com.restfulapi.service;
+import com.restfulapi.dto.ResponseUpdateResume;
 import com.restfulapi.dto.ResumeResponseDTO;
 import com.restfulapi.dto.SimpleJobDTO;
 import com.restfulapi.dto.SimpleUserDTO;
@@ -76,5 +77,24 @@ public class ResumeService {
     }
     public Optional<Resume> getResumeById(long id){
         return resumeRepository.findById(id);
+    }
+    public ResponseUpdateResume convertToUpdateResume(Resume resume){
+        ResponseUpdateResume dto=new ResponseUpdateResume();
+        dto.setId(resume.getId());
+        dto.setStatus(resume.getStatus());
+        return dto;
+    }
+    public Resume updateResume(Resume resume){
+        Optional<Resume>getResume=getResumeById(resume.getId());
+        if (getResume.isEmpty()){
+            throw new RuntimeException("Không tìm thấy Resume với ID: " + resume.getId());
+        }
+        if (resume.getStatus()!=null){
+            getResume.get().setStatus(resume.getStatus());
+        }
+        return resumeRepository.save(getResume.get());
+    }
+    public void deleteResume(long id){
+        resumeRepository.deleteById(id);
     }
 }

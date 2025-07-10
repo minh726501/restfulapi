@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
@@ -23,24 +24,27 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("companies")
     @ApiMessage("Create Company")
     public ResponseEntity<Company>newCompany(@RequestBody @Valid Company company){
         Company newCompany=companyService.saveCompany(company);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("companies")
     @ApiMessage("Fetch All Company")
     public ResponseEntity<List<Company>>getAllCompany(@RequestParam(value = "page",required = false) int page, @RequestParam(value = "size",required = false) int size){
         Pageable pageable= PageRequest.of(page-1,size);
         return ResponseEntity.ok().body(companyService.getAllCompany(pageable));
     }
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("companies/{id}")
     @ApiMessage("Fetch Company")
     public Company getCompanyById(@PathVariable long id){
         return companyService.getCompanyById(id).orElseThrow(() -> new ResourceNotFoundException(("Không tìm thấy Company với ID: " + id)));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("companies")
     @ApiMessage("Update Company")
     public ResponseEntity<?> updateCompany(@RequestBody Company company){
@@ -57,6 +61,7 @@ public class CompanyController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Company với ID: " + company.getId());
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/companies/{id}")
     @ApiMessage("Delete Company")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {

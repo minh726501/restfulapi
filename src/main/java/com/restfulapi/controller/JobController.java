@@ -6,6 +6,7 @@ import com.restfulapi.service.JobService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ public class JobController {
     public JobController(JobService jobService) {
         this.jobService = jobService;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/jobs")
     public ResponseEntity<JobResponseDTO> createJob(@RequestBody Job job){
         Job createJob=jobService.createJob(job);
         return ResponseEntity.ok(jobService.convertToJobResponseDTO(createJob));
     }
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/jobs/{id}")
     public ResponseEntity<JobResponseDTO> getJobById(@PathVariable long id){
         Optional<Job> getJob=jobService.getJobById(id);
@@ -33,6 +36,7 @@ public class JobController {
         }
         return ResponseEntity.ok(jobService.convertToJobResponseDTO(getJob.get()));
     }
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/jobs")
     public ResponseEntity<List<JobResponseDTO>>getAllJob(@RequestParam(value = "page",required = false)int page,@RequestParam(value = "size",required = false)int size){
         Pageable pageable= PageRequest.of(page-1,size);
@@ -44,15 +48,17 @@ public class JobController {
         }
         return ResponseEntity.ok(jobResponseDTOList);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/jobs")
     public ResponseEntity<JobResponseDTO>updateJob(@RequestBody Job job){
         Optional<Job>getJob=jobService.getJobById(job.getId());
         if (getJob.isEmpty()){
-            throw new RuntimeException("Không tìm thấy Job với ID: " + getJob.get().getId());
+            throw new RuntimeException("Không tìm thấy Job với ID: " + job.getId());
         }
         return ResponseEntity.ok(jobService.updateJob(job));
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/jobs/{id}")
     public ResponseEntity<Void>deleteJobById(@PathVariable long id){
         Optional<Job> getJob=jobService.getJobById(id);

@@ -3,11 +3,12 @@ package com.restfulapi.controller;
 import com.restfulapi.entity.Role;
 import com.restfulapi.service.RoleService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/v1")
 public class RoleController {

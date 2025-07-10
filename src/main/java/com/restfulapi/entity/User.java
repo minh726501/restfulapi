@@ -36,7 +36,7 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
     @OneToMany(mappedBy = "user")
